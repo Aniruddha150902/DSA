@@ -41,23 +41,122 @@
 //     }
 // };
 
+// class Solution {
+// public:
+//     void dfs(vector<vector<int>>& isConnected, int curr) {
+//         isConnected[curr][curr] = 0;
+//         for(int i =  0; i < isConnected.size(); i++)
+//             if(isConnected[curr][i] && isConnected[i][i]) {
+//                 isConnected[curr][i] = isConnected[i][curr] = 0; // NOT REQUIRED
+//                 dfs(isConnected, i);
+//             }
+//     }
+//     int findCircleNum(vector<vector<int>>& isConnected) {
+//         int n = isConnected.size(), count = 0;
+//         for(int i = 0; i < n; i++)
+//             if(isConnected[i][i]) {
+//                 count++;
+//                 dfs(isConnected, i);
+//             }
+//         return count;
+//     }
+// };
+
+// UNION FIND USING SIZE
+
+// class DisJointSet {
+//     int group;
+//     vector<int> p, size;
+
+// public:
+//     DisJointSet(int n) {
+//         group = n;
+//         size.resize(n, 1);
+//         p.resize(n);
+//         for(int i = 0; i < n; i++)
+//             p[i] = i;
+//     }
+
+//     int getGroup() {
+//         return group;
+//     }
+
+//     int find(int a) {
+//         if(a == p[a])
+//             return a;
+//         return p[a] = find(p[a]);
+//     }
+
+//     void Union(int a, int b) {
+//         int roota = find(a);
+//         int rootb = find(b);
+//         if(roota == rootb)
+//             return;
+//         if(size[roota] < size[rootb]) {
+//             p[roota] = rootb;
+//             size[rootb] += size[roota];
+//         } else {
+//             p[rootb] = roota;
+//             size[roota] += size[rootb];
+//         }
+//         group--;
+//     }
+// };
+
+// class Solution {
+// public:
+//     int findCircleNum(vector<vector<int>>& isConnected) {
+//         int n = isConnected.size();
+//         DisJointSet ds(n);
+//         for(int i = 0; i < n-1; i++)
+//             for(int j = i+1; j < n; j++)
+//                 if(isConnected[i][j])
+//                     ds.Union(i, j);
+//         return ds.getGroup();
+//     }
+// };
+
+class DisJointSet {
+    int group;
+    vector<int> p;
+
+public:
+    DisJointSet(int n) {
+        group = n;
+        p.resize(n);
+        for(int i = 0; i < n; i++)
+            p[i] = i;
+    }
+
+    int getGroup() {
+        return group;
+    }
+
+    int find(int a) {
+        if(a == p[a])
+            return a;
+        return p[a] = find(p[a]);
+    }
+
+    void Union(int a, int b) {
+        int roota = find(a);
+        int rootb = find(b);
+        if(roota != rootb) {
+            p[rootb] = roota;
+            group--;
+        }
+    }
+};
+
 class Solution {
 public:
-    void dfs(vector<vector<int>>& isConnected, int curr) {
-        isConnected[curr][curr] = 0;
-        for(int i =  0; i < isConnected.size(); i++)
-            if(isConnected[curr][i] && isConnected[i][i]) {
-                isConnected[curr][i] = isConnected[i][curr] = 0; // NOT REQUIRED
-                dfs(isConnected, i);
-            }
-    }
     int findCircleNum(vector<vector<int>>& isConnected) {
-        int n = isConnected.size(), count = 0;
-        for(int i = 0; i < n; i++)
-            if(isConnected[i][i]) {
-                count++;
-                dfs(isConnected, i);
-            }
-        return count;
+        int n = isConnected.size();
+        DisJointSet ds(n);
+        for(int i = 0; i < n-1; i++)
+            for(int j = i+1; j < n; j++)
+                if(isConnected[i][j])
+                    ds.Union(i, j);
+        return ds.getGroup();
     }
 };
